@@ -1,18 +1,16 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DrawLine : MonoBehaviour
-{
+public class DrawLine : MonoBehaviour {
     public GameObject linePrefab;
     public GameObject currentLine;
 
     public EdgeCollider2D edgeCollider;
     public LineRenderer lineRenderer;
     public List<Vector2> fingerPositions;
+    public float pointDrawDistance = 0.1f;
 
-    void CreateLine()
-    {
+    private void CreateLine() {
         currentLine = Instantiate(linePrefab, Vector3.zero, Quaternion.identity);
         lineRenderer = currentLine.GetComponent<LineRenderer>();
         edgeCollider = currentLine.GetComponent<EdgeCollider2D>();
@@ -23,36 +21,28 @@ public class DrawLine : MonoBehaviour
         lineRenderer.SetPosition(1, fingerPositions[1]);
         edgeCollider.points = fingerPositions.ToArray();
     }
-   void UpdateLine(Vector2 newFingerPos)
-    {
+    private void UpdateLine(Vector2 newFingerPos) {
         fingerPositions.Add(newFingerPos);
         lineRenderer.positionCount++;
-        lineRenderer.SetPosition(lineRenderer.positionCount - 1 , newFingerPos); 
+        lineRenderer.SetPosition(lineRenderer.positionCount - 1, newFingerPos);
 
 
         edgeCollider.points = fingerPositions.ToArray();
 
     }
-    void Start()
-    {
-        
-    }
+
 
     // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
+    private void Update() {
+        if (Input.GetMouseButtonDown(0)) {
             CreateLine();
         }
-        if (Input.GetMouseButton(0))
-        {
+        if (Input.GetMouseButton(0)) {
             Vector2 temFingerPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            if (Vector2.Distance(temFingerPos, fingerPositions[fingerPositions.Count - 1]) > .1f)
-            {
+            if (Vector2.Distance(temFingerPos, fingerPositions[fingerPositions.Count - 1]) > pointDrawDistance) {
                 UpdateLine(temFingerPos);
             }
         }
-        
+
     }
 }
